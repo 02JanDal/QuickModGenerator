@@ -1,0 +1,8 @@
+build/
+*~
+CMakeLists.txt.user
+ModProbe/.classpath
+ModProbe/.gradle/
+ModProbe/.project
+ModProbe/.settings/
+ModProbe/bin/
