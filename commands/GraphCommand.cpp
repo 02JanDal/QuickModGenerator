@@ -8,6 +8,9 @@
 
 #include "QuickModReader.h"
 
+// FIXME this is bad
+#include "src/modutils.cpp"
+
 GraphCommand::GraphCommand(QObject *parent) :
 	AbstractCommand(parent)
 {
@@ -17,14 +20,42 @@ GraphCommand::GraphCommand(QObject *parent) :
 bool GraphCommand::handleCommand(const QString &command, const QCommandLineParser &cmd)
 {
 	QList<QuickMod> mods = readMultipleMods(cmd);
+	const QString mcversion = cmd.value("mcver");
+
+	QMap<QString, QString> referenceStyles;
+	referenceStyles["depends"] = "solid";
+	referenceStyles["recommends"] = "dashed";
+	referenceStyles["suggests"] = "dotted";
+	referenceStyles["breaks"] = "bold";
+	QMap<QString, QString> categoryStyles;
+	categoryStyles["API"] = "dashed";
+	categoryStyles["Library"] = "dashed";
 
 	out << "digraph {" << endl;
 	for (auto mod : mods)
 	{
-		out << "\"" << mod.uid << "\"[label=\"" << mod.name << "\"]" << endl;
-		for (auto ref : mod.references.keys())
+		if (mod.uid.isEmpty())
 		{
-			out << "\"" << mod.uid << "\" -> \"" << ref << "\"" << endl;
+			continue;
+		}
+		const QString firstCategory = mod.categories.isEmpty() ? "" : mod.categories.first();
+		const QString style = categoryStyles.contains(firstCategory) ? categoryStyles[firstCategory] : "solid";
+		QuickModVersion version = mod.versions.first();
+		for (auto v : mod.versions)
+		{
+			if (v.name == version.name || !v.mcCompat.contains(mcversion))
+			{
+				continue;
+			}
+			if (Util::Version(v.name) > Util::Version(version.name))
+			{
+				version = v;
+			}
+		}
+		out << "\"" << mod.uid << "\" [label=\"" << mod.name << "\\n" << version.name << "\",style=\"" << style << "\"]" << endl;
+		for (auto it = version.references.begin(); it != version.references.end(); ++it)
+		{
+			out << "\"" << mod.uid << "\" -> \"" << it.key() << "\" [style=\"" << referenceStyles[it.value().second] << "\"]" << endl;
 		}
 	}
 	out << "}" << endl;
@@ -35,4 +66,5 @@ bool GraphCommand::handleCommand(const QString &command, const QCommandLineParse
 void GraphCommand::populateParserForCommand(const QString &command, QCommandLineParser *cmd)
 {
 	addMultiFileArgument(cmd);
+	cmd->addOption(QCommandLineOption("mcver", "The version of Minecraft", "VERSION", "1.6.4"));
 }

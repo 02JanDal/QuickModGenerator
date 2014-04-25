@@ -41,6 +41,10 @@ bool IndexCommand::handleCommand(const QString &command, const QCommandLineParse
 	QJsonArray items;
 	for (auto mod : mods)
 	{
+		if (mod.uid.isEmpty())
+		{
+			continue;
+		}
 		QJsonObject modObj;
 		modObj.insert("uid", mod.uid);
 		modObj.insert("url", mod.updateUrl.toString().remove(base));

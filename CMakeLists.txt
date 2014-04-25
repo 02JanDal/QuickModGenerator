@@ -108,7 +108,7 @@ set(SOURCES
  threadweaver/src/resourcerestrictionpolicy.cpp
 )
 
-include_directories(threadweaver/src commands)
+include_directories(threadweaver/src commands ../MultiMC5/depends/util)
 
 add_executable(QuickModGenerator ${SOURCES})
 qt5_use_modules(QuickModGenerator Core Network Xml Gui)
