@@ -13,7 +13,7 @@ struct QuickModVersion
 	QMap<QString, QPair<QString, QString> > references;
 	QString md5;
 	QString downloadType;
-	enum { ForgeMod, ForgeCoreMod, ConfigPack, Extract, Group } installType = ForgeMod;
+	enum { ForgeMod, ForgeCoreMod, ConfigPack, Extract, Group, Invalid } installType = Invalid;
 };
 
 struct QuickMod

@@ -344,7 +344,10 @@ protected:
 							v.downloadType = "direct";
 						}
 					}
-					v.installType = QuickModVersion::ForgeMod;
+					if (v.installType == QuickModVersion::Invalid)
+					{
+						v.installType = QuickModVersion::ForgeMod;
+					}
 					v.name = version;
 					if (versionIndex == -1)
 					{
@@ -371,11 +374,8 @@ public:
 protected:
 	void parse(const QByteArray &data, const QUrl &url)
 	{
-		QString oneline = QString::fromUtf8(data).remove('\n').remove('\r');
-		while (oneline.contains("  "))
-		{
-			oneline.replace("  ", " ");
-		}
+		QJsonDocument doc = QJsonDocument::fromJson(data);
+		QJsonObject root = doc.object();
 
 		QMutexLocker locker(m_mutex);
 		int index = -1;
@@ -393,102 +393,41 @@ protected:
 		}
 		QuickMod mod = m_mods->at(index);
 
-		// meta tags (name, url and logo)
+		if (mod.name.isEmpty())
 		{
-			QRegularExpression exp(
-				"<meta property=\"(?<id>.*?)\" content=\"(?<content>.*?)\" />");
-			QRegularExpressionMatchIterator it = exp.globalMatch(oneline);
-			while (it.hasNext())
+			mod.name = root.value("title").toString();
+		}
+		for (auto cat : root.value("category").toString().split(QRegularExpression(" and |, ")))
+		{
+			mod.categories.append(cat);
+		}
+		mod.categories.removeDuplicates();
+		if (mod.iconUrl.isEmpty())
+		{
+			mod.iconUrl = QUrl(root.value("thumbnail").toString());
+		}
+		if (mod.authors.isEmpty())
+		{
+			for (auto author : root.value("authors").toArray().toVariantList())
 			{
-				QRegularExpressionMatch match = it.next();
-				const QString id = match.captured("id");
-				const QString content = match.captured("content");
-				if (id == "og:title" && mod.name.isEmpty())
-				{
-					mod.name = content;
-				}
-				else if (id == "og:url" && mod.websiteUrl.isEmpty())
-				{
-					mod.websiteUrl = QUrl(content);
-				}
-				else if (id == "og:image" && mod.logoUrl.isEmpty())
-				{
-					mod.logoUrl = QUrl(content);
-				}
+				mod.authors["Developer"].append(author.toString());
 			}
 		}
-
-		// authors
+		for (auto file : root.value("files").toArray())
 		{
-			QRegularExpression exp("<ul class=\"authors group\">(.*?)</ul>");
-			QRegularExpressionMatch match = exp.match(oneline);
-			QRegularExpression authorsExp("<li>(?<title>.*?): (?<content>.*?)</li>");
-			QRegularExpressionMatchIterator it = authorsExp.globalMatch(match.captured(1));
-			while (it.hasNext())
+			QJsonObject obj = file.toObject();
+			const QString name = cleanVersion(obj.value("name").toString());
+			if (mod.version(name) >= 0)
 			{
-				QRegularExpressionMatch authorsMatch = it.next();
-				const QString title = authorsMatch.captured("title");
-				QRegularExpression authorExp("<a href=\".*?\">(?<name>.*?)</a>");
-				QRegularExpressionMatchIterator authorIt =
-					authorExp.globalMatch(authorsMatch.captured("content"));
-				while (authorIt.hasNext())
-				{
-					QRegularExpressionMatch authorMatch = authorIt.next();
-					const QString name = authorMatch.captured("name");
-					mod.authors[title].append(name);
-				}
-				mod.authors[title].removeDuplicates();
+				continue;
 			}
-		}
-
-		// description
-		if (mod.description.isEmpty())
-		{
-			int start = oneline.indexOf("<div class=\"project-description");
-			int end = oneline.indexOf("</div>", start);
-			if (start > 0 && end > 0)
-			{
-				mod.description = oneline.mid(start, end - start + 6);
-			}
-		}
-
-		// versions
-		{
-			QRegularExpression exp("<tr class=\".*?\"><td><a href=\"(?<url>.*?)\">.*? "
-								   "(?<version>.*?)</a>.*?</td><td "
-								   "data-sort-value=\"1\">Release</td><td "
-								   "data-sort-value=\".*?\">(?<mcver>.*?)</td><td "
-								   "data-sort-value=\".*?\">.*?</td><td "
-								   "data-sort-value=\".*?\"><abbr class=\"standard-date\" "
-								   "title=\".*?\" data-epoch=\".*?\">.*?</abbr></td></tr>");
-			QRegularExpression versionExp("[0-9\\.a-z]*?$");
-			QRegularExpressionMatchIterator it = exp.globalMatch(oneline);
-			while (it.hasNext())
-			{
-				QRegularExpressionMatch match = it.next();
-				const QString versionUrl = match.captured("url");
-				const QString version = versionExp.match(match.captured("version")).captured();
-				const QString mcver = match.captured("mcver");
-				int versionIndex = mod.version(version);
-				QuickModVersion ver =
-					versionIndex == -1 ? QuickModVersion() : mod.versions.at(versionIndex);
-				ver.name = version;
-				ver.mcCompat.append(mcver);
-				ver.mcCompat.removeDuplicates();
-				if (ver.url.isEmpty() || ver.url.toString().contains("adf.ly"))
-				{
-					ver.url = url.resolved(versionUrl);
-					ver.downloadType = "parallel";
-				}
-				if (versionIndex == -1)
-				{
-					mod.versions.append(ver);
-				}
-				else
-				{
-					mod.versions.replace(versionIndex, ver);
-				}
-			}
+			QuickModVersion version;
+			version.name = name;
+			version.url = obj.value("url").toString();
+			version.mcCompat += obj.value("version").toString();
+			version.downloadType = "parallel";
+			version.installType = QuickModVersion::ForgeMod;
+			mod.versions.append(version);
 		}
 
 		m_mods->replace(index, mod);
@@ -496,6 +435,12 @@ protected:
 
 private:
 	QString m_mod;
+
+	QString cleanVersion(const QString &in)
+	{
+		QRegularExpression exp("[0-9]\\.[0-9](\\.[0-9])*");
+		return exp.match(in).captured();
+	}
 };
 class BitlyBundleParser : public BaseParseJob
 {
@@ -992,7 +937,7 @@ bool UpdateCommand::handleCommand(const QString &command, const QCommandLinePars
 	{
 		if (mod.websiteUrl.host() == "www.curse.com")
 		{
-			parsers.insert(mod.websiteUrl.toString(), new CurseParser(mod.name));
+			parsers.insert(mod.websiteUrl.toString().replace("www.curse.com", "widget.mcf.li").append(".json"), new CurseParser(mod.name));
 		}
 	}
 
