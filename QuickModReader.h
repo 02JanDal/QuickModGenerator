@@ -18,7 +18,7 @@ public:
 
 private:
 	QuickMod jsonToMod(const QByteArray &json);
-	void jsonToVersion(const QByteArray &json, QuickMod &mod);
+	void jsonToVersion(const QJsonArray &array, QuickMod &mod);
 	QMap<QString, QString> jsonToStringStringMap(const QJsonValue &json);
 	QMap<QString, QStringList> jsonToStringStringListMap(const QJsonValue &json);
 	QStringList jsonToStringList(const QJsonValue &json);

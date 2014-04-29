@@ -25,18 +25,6 @@ bool QuickModWriter::write(const QuickMod &mod, const QDir &dir, QString *errorS
 		file.write(modToJson(mod));
 		file.close();
 	}
-	// versions
-	{
-		const QString fileName = mod.versionsUrl.path().mid(mod.versionsUrl.path().lastIndexOf('/')+1);
-		QFile file(fileName);
-		if (!file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate))
-		{
-			*errorString = tr("Cannot write QuickMod version file %1: %2").arg(file.fileName(), file.errorString());
-			return false;
-		}
-		file.write(versionToJson(mod));
-		file.close();
-	}
 	return true;
 }
 bool QuickModWriter::write(const QList<QuickMod> &mods, const QDir &dir, QString *errorString)
@@ -69,11 +57,12 @@ QByteArray QuickModWriter::modToJson(const QuickMod &mod)
 	obj.insert("references", stringStringMapToJson(mod.references));
 	obj.insert("authors", stringStringListMapToJson(mod.authors));
 	obj.insert("uid", mod.uid);
-	obj.insert("versionsUrl", mod.versionsUrl.toString(QUrl::FullyEncoded));
+	obj.insert("versions", versionToJson(mod));
+
 	return QJsonDocument(obj).toJson(QJsonDocument::Indented);
 }
 
-QByteArray QuickModWriter::versionToJson(const QuickMod &mod)
+QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 {
 	QJsonArray array;
 	foreach (const QuickModVersion &ver, mod.versions)
@@ -111,7 +100,7 @@ QByteArray QuickModWriter::versionToJson(const QuickMod &mod)
 		}
 		array.append(obj);
 	}
-	return QJsonDocument(array).toJson(QJsonDocument::Indented);
+	return array;
 }
 
 QJsonObject QuickModWriter::stringStringMapToJson(const QMap<QString, QString> &map)

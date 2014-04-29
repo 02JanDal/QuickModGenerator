@@ -24,13 +24,7 @@ QuickMod QuickModReader::read(const QString &fileName, QStringList *errorStrings
 		errorStrings->append(tr("Cannot read QuickMod file %1: %2").arg(file.fileName(), file.errorString()));
 		return QuickMod(true);
 	}
-	QuickMod mod = jsonToMod(file.readAll());
-	QFile version(QString(fileName).replace(".json", ".versions.json"));
-	if (version.open(QFile::ReadOnly))
-	{
-		jsonToVersion(version.readAll(), mod);
-	}
-	return mod;
+	return jsonToMod(file.readAll());
 }
 QList<QuickMod> QuickModReader::read(const QStringList &fileNames, QStringList *errorStrings)
 {
@@ -77,15 +71,15 @@ QuickMod QuickModReader::jsonToMod(const QByteArray &json)
 	mod.updateUrl = QUrl(obj.value("updateUrl").toString());
 	mod.authors = jsonToStringStringListMap(obj.value("authors"));
 	mod.references = jsonToStringStringMap(obj.value("references"));
-	mod.versionsUrl = QUrl(obj.value("versionsUrl").toString());
 	mod.uid = obj.value("uid").toString();
+	jsonToVersion(obj.value("versions").toArray(), mod);
+
 	return mod;
 }
 
-void QuickModReader::jsonToVersion(const QByteArray &json, QuickMod &mod)
+void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 {
-	QJsonArray array = QJsonDocument::fromJson(json).array();
-	foreach (const QJsonValue &val, array)
+	for (auto val : array)
 	{
 		QJsonObject obj = val.toObject();
 		QuickModVersion version;

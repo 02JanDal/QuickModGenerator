@@ -32,7 +32,6 @@ struct QuickMod
 	QStringList tags;
 	QList<QuickModVersion> versions;
 	QMap<QString, QStringList> authors;
-	QUrl versionsUrl;
 	QString uid;
 
 	bool isInvalid() const { return m_invalid; }

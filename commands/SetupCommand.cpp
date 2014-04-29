@@ -57,12 +57,10 @@ bool SetupCommand::handleCommand(const QString &command, const QCommandLineParse
 	if (cmd.isSet("server"))
 	{
 		mod.updateUrl = QUrl(cmd.value("server")).resolved(name + ".json");
-		mod.versionsUrl = QUrl(cmd.value("server")).resolved(name + ".versions.json");
 	}
 	else
 	{
 		mod.updateUrl = QUrl("http://localhost/quickmod/").resolved(name + ".json");
-		mod.versionsUrl = QUrl("http://localhost/quickmod/").resolved(name + ".versions.json");
 	}
 
 	QuickModWriter writer(this);

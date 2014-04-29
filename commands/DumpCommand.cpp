@@ -31,7 +31,6 @@ bool DumpCommand::handleCommand(const QString &command, const QCommandLineParser
 		<< "Categories: " << mod.categories.join(", ") << endl
 		<< "Tags: " << mod.tags.join(", ") << endl
 		<< "Update URL: " << mod.updateUrl.toString() << endl
-		<< "Versions URL: " << mod.versionsUrl.toString() << endl
 		<< "Authors: " << QJsonDocument::fromVariant(QVariant::fromValue(mod.authors)).toJson() << endl
 		<< "References: " << QJsonDocument::fromVariant(QVariant::fromValue(mod.references)).toJson() << endl
 		   ;
