@@ -7,6 +7,7 @@
 struct QuickModVersion
 {
 	QString name;
+	QString type;
 	QUrl url;
 	QStringList mcCompat;
 	QString forgeCompat;

@@ -69,6 +69,7 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 	{
 		QJsonObject obj;
 		obj.insert("name", ver.name);
+		obj.insert("type", ver.type);
 		obj.insert("url", ver.url.toString(QUrl::FullyEncoded));
 		obj.insert("mcCompat", QJsonArray::fromStringList(ver.mcCompat));
 		QJsonArray refs;
