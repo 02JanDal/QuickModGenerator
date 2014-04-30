@@ -14,6 +14,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QProcess>
+#include <QDesktopServices>
 
 #include "QuickModReader.h"
 #include "QuickMod.h"
@@ -647,17 +648,26 @@ protected:
 		QEventLoop eventLoop;
 		QNetworkAccessManager *nam = new QNetworkAccessManager;
 		int left = 0;
+		QTextStream in(stdin);
 		for (auto version : m_mod.versions)
 		{
 			auto url = version.url;
-			if (version.downloadType != "direct" && url.host() != "www.curse.com")
-			{
-				continue;
-			}
 			QFile *f = new QFile(filename(m_mod, version));
 			if (f->exists())
 			{
 				continue;
+			}
+			if (version.downloadType != "direct" && url.host() != "www.curse.com")
+			{
+				QDesktopServices::openUrl(url);
+				output(m_mod.name + " " + version.name + ">");
+				QString i;
+				in >> i;
+				if (i.isEmpty())
+				{
+					continue;
+				}
+				url = QUrl::fromUserInput(i);
 			}
 			Fetcher *fetcher = new Fetcher(url, nam);
 			emit output("Fetching " + url.toString() + "...");
