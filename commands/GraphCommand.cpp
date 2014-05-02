@@ -8,8 +8,7 @@
 
 #include "QuickModReader.h"
 
-// FIXME this is bad
-#include "src/modutils.cpp"
+#include "include/modutils.h"
 
 GraphCommand::GraphCommand(QObject *parent) :
 	AbstractCommand(parent)

@@ -48,15 +48,15 @@ bool FixupCommand::handleCommand(const QString &command, const QCommandLineParse
 		}
 		if (mod.websiteUrl.isEmpty())
 		{
-			mod.websiteUrl = QUrl::fromUserInput(getCommandLineInput("Website URL:"));
+			mod.websiteUrl = getCommandLineInput("Website URL:");
 		}
 		if (mod.iconUrl.isEmpty())
 		{
-			mod.iconUrl = QUrl::fromUserInput(getCommandLineInput("Icon URL:"));
+			mod.iconUrl = getCommandLineInput("Icon URL:");
 		}
 		if (mod.logoUrl.isEmpty())
 		{
-			mod.logoUrl = QUrl::fromUserInput(getCommandLineInput("Logo URL:"));
+			mod.logoUrl = getCommandLineInput("Logo URL:");
 		}
 		if (mod.modId.isEmpty())
 		{

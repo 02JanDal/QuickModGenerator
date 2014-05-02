@@ -25,12 +25,12 @@ bool DumpCommand::handleCommand(const QString &command, const QCommandLineParser
 		<< "NEM Name: " << mod.nemName << endl
 		<< "Mod ID: " << mod.modId << endl
 		<< "Description: " << mod.description << endl
-		<< "Website: " << mod.websiteUrl.toString() << endl
-		<< "Icon: " << mod.iconUrl.toString() << endl
-		<< "Logo: " << mod.logoUrl.toString() << endl
+		<< "Website: " << mod.websiteUrl << endl
+		<< "Icon: " << mod.iconUrl << endl
+		<< "Logo: " << mod.logoUrl << endl
 		<< "Categories: " << mod.categories.join(", ") << endl
 		<< "Tags: " << mod.tags.join(", ") << endl
-		<< "Update URL: " << mod.updateUrl.toString() << endl
+		<< "Update URL: " << mod.updateUrl << endl
 		<< "Authors: " << QJsonDocument::fromVariant(QVariant::fromValue(mod.authors)).toJson() << endl
 		<< "References: " << QJsonDocument::fromVariant(QVariant::fromValue(mod.references)).toJson() << endl
 		   ;

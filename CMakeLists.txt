@@ -106,6 +106,8 @@ set(SOURCES
  threadweaver/src/dependency.cpp
  threadweaver/src/resourcerestrictionpolicy.h
  threadweaver/src/resourcerestrictionpolicy.cpp
+
+ ../MultiMC5/depends/util/src/modutils.cpp
 )
 
 include_directories(threadweaver/src commands ../MultiMC5/depends/util)

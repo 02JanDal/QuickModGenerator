@@ -13,7 +13,7 @@ QuickModReader::QuickModReader(QObject *parent) :
 
 QuickMod QuickModReader::read(const QByteArray &data)
 {
-	return jsonToMod(data);
+	return jsonToMod(data, new QStringList());
 }
 
 QuickMod QuickModReader::read(const QString &fileName, QStringList *errorStrings)
@@ -24,7 +24,7 @@ QuickMod QuickModReader::read(const QString &fileName, QStringList *errorStrings
 		errorStrings->append(tr("Cannot read QuickMod file %1: %2").arg(file.fileName(), file.errorString()));
 		return QuickMod(true);
 	}
-	return jsonToMod(file.readAll());
+	return jsonToMod(file.readAll(), errorStrings);
 }
 QList<QuickMod> QuickModReader::read(const QStringList &fileNames, QStringList *errorStrings)
 {
@@ -33,10 +33,6 @@ QList<QuickMod> QuickModReader::read(const QStringList &fileNames, QStringList *
 	QList<QuickMod> res;
 	foreach (const QString &fileName, tmp)
 	{
-		if (fileName.endsWith(".versions.json"))
-		{
-			continue;
-		}
 		if (fileName == "index.json")
 		{
 			continue;
@@ -54,9 +50,15 @@ QList<QuickMod> QuickModReader::read(const QDir &dir, QStringList *errorStrings)
 	return read(dir.entryList(QStringList() << "*.json", QDir::Files), errorStrings);
 }
 
-QuickMod QuickModReader::jsonToMod(const QByteArray &json)
+QuickMod QuickModReader::jsonToMod(const QByteArray &json, QStringList *errorStrings)
 {
-	QJsonObject obj = QJsonDocument::fromJson(json).object();
+	QJsonParseError error;
+	QJsonObject obj = QJsonDocument::fromJson(json, &error).object();
+	if (error.error != QJsonParseError::NoError)
+	{
+		errorStrings->append(error.errorString());
+		return QuickMod();
+	}
 
 	QuickMod mod;
 	mod.name = obj.value("name").toString();
@@ -65,13 +67,14 @@ QuickMod QuickModReader::jsonToMod(const QByteArray &json)
 	mod.description = obj.value("description").toString();
 	mod.categories = jsonToStringList(obj.value("categories"));
 	mod.tags = jsonToStringList(obj.value("tags"));
-	mod.websiteUrl = QUrl(obj.value("websiteUrl").toString());
-	mod.iconUrl = QUrl(obj.value("iconUrl").toString());
-	mod.logoUrl = QUrl(obj.value("logoUrl").toString());
-	mod.updateUrl = QUrl(obj.value("updateUrl").toString());
+	mod.websiteUrl = obj.value("websiteUrl").toString();
+	mod.iconUrl = obj.value("iconUrl").toString();
+	mod.logoUrl = obj.value("logoUrl").toString();
+	mod.updateUrl = obj.value("updateUrl").toString();
 	mod.authors = jsonToStringStringListMap(obj.value("authors"));
 	mod.references = jsonToStringStringMap(obj.value("references"));
 	mod.uid = obj.value("uid").toString();
+	mod.repo = obj.value("repo").toString();
 	jsonToVersion(obj.value("versions").toArray(), mod);
 
 	return mod;
@@ -85,7 +88,7 @@ void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 		QuickModVersion version;
 		version.name = obj.value("name").toString();
 		version.type = obj.value("type").toString("Release");
-		version.url = QUrl(obj.value("url").toString());
+		version.url = obj.value("url").toString();
 		version.mcCompat = jsonToStringList(obj.value("mcCompat"));
 		version.references.clear();
 		for (auto item : obj.value("references").toArray())

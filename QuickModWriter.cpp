@@ -15,11 +15,11 @@ bool QuickModWriter::write(const QuickMod &mod, const QDir &dir, QString *errorS
 {
 	// mod
 	{
-		const QString fileName = mod.updateUrl.path().mid(mod.updateUrl.path().lastIndexOf('/')+1);
+		const QString fileName = mod.updateUrl.mid(mod.updateUrl.lastIndexOf('/')+1);
 		QFile file(fileName);
 		if (!file.open(QFile::WriteOnly | QFile::Text | QFile::Truncate))
 		{
-			*errorString = tr("Cannot write QuickMod file %1: %2").arg(file.fileName(), file.errorString());
+			*errorString = tr("Cannot write QuickMod file %1 (%2): %3").arg(file.fileName(), mod.name, file.errorString());
 			return false;
 		}
 		file.write(modToJson(mod));
@@ -48,15 +48,16 @@ QByteArray QuickModWriter::modToJson(const QuickMod &mod)
 	obj.insert("description", mod.description);
 	obj.insert("nemName", mod.nemName);
 	obj.insert("modId", mod.modId);
-	obj.insert("websiteUrl", mod.websiteUrl.toString(QUrl::FullyEncoded));
-	obj.insert("iconUrl", mod.iconUrl.toString(QUrl::FullyEncoded));
-	obj.insert("logoUrl", mod.logoUrl.toString(QUrl::FullyEncoded));
-	obj.insert("updateUrl", mod.updateUrl.toString(QUrl::FullyEncoded));
+	obj.insert("websiteUrl", mod.websiteUrl);
+	obj.insert("iconUrl", mod.iconUrl);
+	obj.insert("logoUrl", mod.logoUrl);
+	obj.insert("updateUrl", mod.updateUrl);
 	obj.insert("categories", QJsonArray::fromStringList(mod.categories));
 	obj.insert("tags", QJsonArray::fromStringList(mod.tags));
 	obj.insert("references", stringStringMapToJson(mod.references));
 	obj.insert("authors", stringStringListMapToJson(mod.authors));
 	obj.insert("uid", mod.uid);
+	obj.insert("repo", mod.repo);
 	obj.insert("versions", versionToJson(mod));
 
 	return QJsonDocument(obj).toJson(QJsonDocument::Indented);
@@ -70,7 +71,7 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 		QJsonObject obj;
 		obj.insert("name", ver.name);
 		obj.insert("type", ver.type);
-		obj.insert("url", ver.url.toString(QUrl::FullyEncoded));
+		obj.insert("url", ver.url);
 		obj.insert("mcCompat", QJsonArray::fromStringList(ver.mcCompat));
 		QJsonArray refs;
 		for (auto ref : ver.references.keys())
@@ -98,6 +99,7 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 		case QuickModVersion::Extract:      obj.insert("installType", QString("extract"));		break;
 		case QuickModVersion::ConfigPack:   obj.insert("installType", QString("configPack"));   break;
 		case QuickModVersion::Group:	    obj.insert("installType", QString("group"));		break;
+		default: obj.insert("installType", QString("forgeMod")); break;
 		}
 		array.append(obj);
 	}

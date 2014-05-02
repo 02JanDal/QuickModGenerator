@@ -47,7 +47,7 @@ bool IndexCommand::handleCommand(const QString &command, const QCommandLineParse
 		}
 		QJsonObject modObj;
 		modObj.insert("uid", mod.uid);
-		modObj.insert("url", mod.updateUrl.toString().remove(base));
+		modObj.insert("url", mod.updateUrl.remove(base));
 		items.append(modObj);
 	}
 	root.insert("index", items);

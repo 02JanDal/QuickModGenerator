@@ -52,15 +52,15 @@ bool SetupCommand::handleCommand(const QString &command, const QCommandLineParse
 	}
 	if (cmd.isSet("curse"))
 	{
-		mod.websiteUrl = QUrl(QString("http://www.curse.com/mc-mods/minecraft/%1").arg(cmd.value("curse")));
+		mod.websiteUrl = QString("http://www.curse.com/mc-mods/minecraft/%1").arg(cmd.value("curse"));
 	}
 	if (cmd.isSet("server"))
 	{
-		mod.updateUrl = QUrl(cmd.value("server")).resolved(name + ".json");
+		mod.updateUrl = QUrl(cmd.value("server")).resolved(name + ".json").toString();
 	}
 	else
 	{
-		mod.updateUrl = QUrl("http://localhost/quickmod/").resolved(name + ".json");
+		mod.updateUrl = QUrl("http://localhost/quickmod/").resolved(name + ".json").toString();
 	}
 
 	QuickModWriter writer(this);

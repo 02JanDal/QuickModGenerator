@@ -19,6 +19,8 @@
 #include "QuickModReader.h"
 #include "QuickMod.h"
 
+#include "include/modutils.h"
+
 #include "sequence.h"
 #include "collection.h"
 #include "threadweaver.h"
@@ -78,6 +80,8 @@ protected:
 			mapping["ForgeMultipart"] = "codechicken.multipart";
 			mapping["AppliedEnergistics"] = "appeng";
 			mapping["Buildcraft|Core"] = "buildcraft";
+			mapping["BuildCraft|Core"] = "buildcraft";
+			mapping["BuildCraft|Transport"] = "buildcraft";
 			mapping["ExtraBees"] = "binnie.extrabees";
 			mapping["BiomesOPlenty"] = "biomesoplenty";
 			mapping["Thaumcraft"] = "thaumcraft";
@@ -90,6 +94,7 @@ protected:
 			mapping["Growthcraft|Apples"] = "growthcraft.apples";
 			mapping["Growthcraft|Bamboo"] = "growthcraft.bamboo";
 			mapping["Growthcraft|Bees"] = "growthcraft.bees";
+			mapping["FML"] = "";
 			for (auto mod : mods())
 			{
 				if (!mod.modId.isEmpty() && !mod.uid.isEmpty())
@@ -111,7 +116,7 @@ protected:
 		{
 			if (mod.uid == uid)
 			{
-				return mod.updateUrl.toString();
+				return mod.updateUrl;
 			}
 		}
 		return QString();
@@ -331,10 +336,10 @@ protected:
 					{
 						v.mcCompat.append(pair.first);
 					}
-					if (v.url.isEmpty() || (v.url.toString().contains("adf.ly") &&
+					if (v.url.isEmpty() || (v.url.contains("adf.ly") &&
 											!pair.second.toString().contains("adf.ly")))
 					{
-						v.url = pair.second;
+						v.url = pair.second.toString();
 						v.md5.clear();
 						if (pair.second.toString().contains("adf.ly"))
 						{
@@ -405,7 +410,7 @@ protected:
 		mod.categories.removeDuplicates();
 		if (mod.iconUrl.isEmpty())
 		{
-			mod.iconUrl = QUrl(root.value("thumbnail").toString());
+			mod.iconUrl = root.value("thumbnail").toString();
 		}
 		if (mod.authors.isEmpty())
 		{
@@ -488,7 +493,7 @@ protected:
 					{
 						QuickModVersion v;
 						v.name = version;
-						v.url = linkList[version];
+						v.url = linkList[version].toString();
 						v.downloadType = "direct";
 						mod.versions.append(v);
 					}
@@ -539,7 +544,7 @@ protected:
 					{
 						QuickModVersion v;
 						v.name = version;
-						v.url = linkList[version].first;
+						v.url = linkList[version].first.toString();
 						v.mcCompat += linkList[version].second;
 						v.downloadType = "direct";
 						mod.versions.append(v);
@@ -572,7 +577,7 @@ protected:
 		for (auto it = m_parsers.begin(); it != m_parsers.end(); ++it)
 		{
 			auto parseJob = it.value();
-			auto url = QUrl(it.key());
+			auto url = Util::expandQMURL(it.key());
 			Fetcher *fetcher = new Fetcher(url, nam);
 			emit output("Fetching " + url.toString() + "...");
 			connect(fetcher, &Fetcher::done,
@@ -651,7 +656,7 @@ protected:
 		QTextStream in(stdin);
 		for (auto version : m_mod.versions)
 		{
-			auto url = version.url;
+			auto url = Util::expandQMURL(version.url);
 			QFile *f = new QFile(filename(m_mod, version));
 			if (f->exists())
 			{
@@ -813,6 +818,10 @@ protected:
 					QRegularExpressionMatch match = depExp.match(dep);
 					const QString type = match.captured("type");
 					const QString uid = uidForModId(match.captured("modid"));
+					if (uid.isEmpty())
+					{
+						continue;
+					}
 					const QString version = match.captured("version");
 					if (uid == "Forge")
 					{
@@ -938,6 +947,9 @@ bool UpdateCommand::handleCommand(const QString &command, const QCommandLinePars
 	parsers.insert("http://www.chickenbones.craftsaddle.org/Files/New_Versions/links.php",
 				   new ChickenbonesParser);
 	parsers.insert("http://files.minecraftforge.net/CodeChickenLib/json", new ForgeFilesParser("CodeChickenLib"));
+	parsers.insert("http://files.minecraftforge.net/BiomesOPlenty/json", new ForgeFilesParser("Biomes O' Plenty"));
+	parsers.insert("http://files.minecraftforge.net/CompactSolars/json", new ForgeFilesParser("CompactSolars"));
+	parsers.insert("http://files.minecraftforge.net/IronChests2/json", new ForgeFilesParser("IronChests"));
 	parsers.insert("https://api-ssl.bitly.com/v3/bundle/"
 				   "contents?bundle_link=http%3A%2F%2Fbitly.com%2Fbundles%2Fzerokyuuni%2F1&"
 				   "access_token=" +
@@ -945,9 +957,9 @@ bool UpdateCommand::handleCommand(const QString &command, const QCommandLinePars
 				   new BitlyBundleParser("ExAliquo"));
 	for (auto mod : mods)
 	{
-		if (mod.websiteUrl.host() == "www.curse.com")
+		if (mod.websiteUrl.contains("www.curse.com"))
 		{
-			parsers.insert(mod.websiteUrl.toString().replace("www.curse.com", "widget.mcf.li").append(".json"), new CurseParser(mod.name));
+			parsers.insert(mod.websiteUrl.replace("www.curse.com", "widget.mcf.li").append(".json"), new CurseParser(mod.name));
 		}
 	}
 
