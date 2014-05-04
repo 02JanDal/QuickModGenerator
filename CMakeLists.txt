@@ -17,7 +17,7 @@ elseif(MINGW)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall")
 endif()
 
-find_package(Qt5 COMPONENTS Core Network Xml Gui REQUIRED)
+find_package(Qt5 COMPONENTS Core Network Xml Gui Widgets REQUIRED)
 
 include_directories(SYSTEM /usr/include/threadweaver)
 
@@ -29,6 +29,13 @@ set(SOURCES
  QuickModWriter.cpp
  QuickModReader.h
  QuickModReader.cpp
+
+ MainWidget.h
+ MainWidget.cpp
+ FixupWidget.h
+ FixupWidget.cpp
+ GraphWidget.h
+ GraphWidget.cpp
 
  commands/DumpCommand.h
  commands/DumpCommand.cpp
@@ -46,6 +53,8 @@ set(SOURCES
  commands/VerifyCommand.cpp
  commands/UpdateCommand.h
  commands/UpdateCommand.cpp
+ commands/GuiCommand.h
+ commands/GuiCommand.cpp
 
  commands/AbstractCommand.h
  commands/AbstractCommand.cpp
@@ -110,10 +119,12 @@ set(SOURCES
  ../MultiMC5/depends/util/src/modutils.cpp
 )
 
+qt5_wrap_ui(UIS MainWidget.ui FixupWidget.ui GraphWidget.ui)
+
 include_directories(threadweaver/src commands ../MultiMC5/depends/util)
 
-add_executable(QuickModGenerator ${SOURCES})
-qt5_use_modules(QuickModGenerator Core Network Xml Gui)
+add_executable(QuickModGenerator ${SOURCES} ${UIS})
+qt5_use_modules(QuickModGenerator Core Network Xml Gui Widgets)
 
 set(MODPROBE_DIR "${CMAKE_SOURCE_DIR}/ModProbe")
 set(MODPROBE_VERSION "1.0")

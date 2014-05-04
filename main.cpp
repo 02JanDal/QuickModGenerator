@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QCommandLineOption>
 #include <QCommandLineParser>
 #include <QTextStream>
@@ -18,25 +18,17 @@
 #include "SetupCommand.h"
 #include "VerifyCommand.h"
 #include "UpdateCommand.h"
+#include "GuiCommand.h"
 
 int main(int argc, char **argv)
 {
-	QGuiApplication app(argc, argv);
+	QApplication app(argc, argv);
 	QTextStream out(stdout);
 
 	QList<AbstractCommand *> commandProviders;
-	/*QList<AbstractParser *> parsers;
-	parsers.append(new NEMParser);
-	parsers.append(new CurseParser);
-	parsers.append(new ForgeParser);
-	parsers.append(new FTBConfluenceChangelogParser);
-	foreach (AbstractParser *parser, parsers)
-	{
-		commandProviders.append(parser);
-	}*/
 	commandProviders << new DumpCommand << new FixupCommand << new FormatCommand
 					 << new GraphCommand << new IndexCommand << new SetupCommand
-					 << new VerifyCommand << new UpdateCommand;
+					 << new VerifyCommand << new UpdateCommand << new GuiCommand;
 
 	QMap<QString, AbstractCommand *> commands;
 	foreach(AbstractCommand * commandProvider, commandProviders)

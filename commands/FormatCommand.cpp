@@ -38,7 +38,5 @@ bool FormatCommand::handleCommand(const QString &command, const QCommandLinePars
 
 void FormatCommand::populateParserForCommand(const QString &command, QCommandLineParser *cmd)
 {
-	cmd->addOption(QCommandLineOption(tr("no-checksums"), tr("Don't fix missing checksums")));
-	cmd->addOption(QCommandLineOption(tr("browser"), tr("Opens a browser for every mod")));
 	addMultiFileArgument(cmd);
 }
