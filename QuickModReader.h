@@ -17,7 +17,7 @@ public:
 	QList<QuickMod> read(const QDir &dir, QStringList *errorStrings);
 
 private:
-	QuickMod jsonToMod(const QByteArray &json, QStringList *errorStrings);
+	QuickMod jsonToMod(const QByteArray &json, const QString &filename, QStringList *errorStrings);
 	void jsonToVersion(const QJsonArray &array, QuickMod &mod);
 	QMap<QString, QString> jsonToStringStringMap(const QJsonValue &json);
 	QMap<QString, QStringList> jsonToStringStringListMap(const QJsonValue &json);

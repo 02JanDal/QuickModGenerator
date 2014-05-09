@@ -55,6 +55,8 @@ set(SOURCES
  commands/UpdateCommand.cpp
  commands/GuiCommand.h
  commands/GuiCommand.cpp
+ commands/CreateChecksumCommand.h
+ commands/CreateChecksumCommand.cpp
 
  commands/AbstractCommand.h
  commands/AbstractCommand.cpp

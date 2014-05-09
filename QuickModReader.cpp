@@ -13,7 +13,7 @@ QuickModReader::QuickModReader(QObject *parent) :
 
 QuickMod QuickModReader::read(const QByteArray &data)
 {
-	return jsonToMod(data, new QStringList());
+	return jsonToMod(data, QString(), new QStringList());
 }
 
 QuickMod QuickModReader::read(const QString &fileName, QStringList *errorStrings)
@@ -24,7 +24,7 @@ QuickMod QuickModReader::read(const QString &fileName, QStringList *errorStrings
 		errorStrings->append(tr("Cannot read QuickMod file %1: %2").arg(file.fileName(), file.errorString()));
 		return QuickMod(true);
 	}
-	return jsonToMod(file.readAll(), errorStrings);
+	return jsonToMod(file.readAll(), fileName, errorStrings);
 }
 QList<QuickMod> QuickModReader::read(const QStringList &fileNames, QStringList *errorStrings)
 {
@@ -33,7 +33,7 @@ QList<QuickMod> QuickModReader::read(const QStringList &fileNames, QStringList *
 	QList<QuickMod> res;
 	foreach (const QString &fileName, tmp)
 	{
-		if (fileName == "index.json")
+		if (fileName == "index.json" || fileName.endsWith(".verify.json"))
 		{
 			continue;
 		}
@@ -50,13 +50,13 @@ QList<QuickMod> QuickModReader::read(const QDir &dir, QStringList *errorStrings)
 	return read(dir.entryList(QStringList() << "*.json", QDir::Files), errorStrings);
 }
 
-QuickMod QuickModReader::jsonToMod(const QByteArray &json, QStringList *errorStrings)
+QuickMod QuickModReader::jsonToMod(const QByteArray &json, const QString &filename, QStringList *errorStrings)
 {
 	QJsonParseError error;
 	QJsonObject obj = QJsonDocument::fromJson(json, &error).object();
 	if (error.error != QJsonParseError::NoError)
 	{
-		errorStrings->append(error.errorString());
+		errorStrings->append(tr("JSON parse error in %1: %2").arg(filename, error.errorString()));
 		return QuickMod();
 	}
 
@@ -68,6 +68,7 @@ QuickMod QuickModReader::jsonToMod(const QByteArray &json, QStringList *errorStr
 	mod.categories = jsonToStringList(obj.value("categories"));
 	mod.tags = jsonToStringList(obj.value("tags"));
 	mod.updateUrl = obj.value("updateUrl").toString();
+	mod.verifyUrl = obj.value("verifyUrl").toString();
 	mod.authors = jsonToStringStringListMap(obj.value("authors"));
 	mod.references = jsonToStringStringMap(obj.value("references"));
 	mod.uid = obj.value("uid").toString();

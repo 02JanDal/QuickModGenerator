@@ -19,6 +19,7 @@
 #include "VerifyCommand.h"
 #include "UpdateCommand.h"
 #include "GuiCommand.h"
+#include "CreateChecksumCommand.h"
 
 int main(int argc, char **argv)
 {
@@ -28,7 +29,7 @@ int main(int argc, char **argv)
 	QList<AbstractCommand *> commandProviders;
 	commandProviders << new DumpCommand << new FixupCommand << new FormatCommand
 					 << new GraphCommand << new IndexCommand << new SetupCommand
-					 << new VerifyCommand << new UpdateCommand << new GuiCommand;
+					 << new VerifyCommand << new UpdateCommand << new GuiCommand << new CreateChecksumCommand;
 
 	QMap<QString, AbstractCommand *> commands;
 	foreach(AbstractCommand * commandProvider, commandProviders)
@@ -71,7 +72,15 @@ int main(int argc, char **argv)
 		AbstractCommand *commandProvider = commands[cmd];
 		commandProvider->populateParserForCommand(cmd, &args);
 		args.process(app);
-		commandProvider->handleCommand(cmd, args);
+		try
+		{
+			commandProvider->handleCommand(cmd, args);
+		}
+		catch (std::exception &e)
+		{
+			out << "Caught exception: " << e.what() << endl;
+		}
+
 		return 0;
 	}
 

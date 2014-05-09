@@ -22,7 +22,8 @@ bool QuickModWriter::write(const QuickMod &mod, const QDir &dir, QString *errorS
 			*errorString = tr("Cannot write QuickMod file %1 (%2): %3").arg(file.fileName(), mod.name, file.errorString());
 			return false;
 		}
-		file.write(modToJson(mod));
+		const QByteArray data = modToJson(mod);
+		file.write(data);
 		file.close();
 	}
 	return true;
@@ -44,6 +45,7 @@ QByteArray QuickModWriter::modToJson(const QuickMod &mod)
 {
 	QJsonObject obj;
 
+	obj.insert("formatVersion", 1);
 	obj.insert("name", mod.name);
 	obj.insert("description", mod.description);
 	obj.insert("nemName", mod.nemName);
@@ -55,6 +57,7 @@ QByteArray QuickModWriter::modToJson(const QuickMod &mod)
 	}
 	obj.insert("urls", urls);
 	obj.insert("updateUrl", mod.updateUrl);
+	obj.insert("verifyUrl", mod.verifyUrl);
 	obj.insert("categories", QJsonArray::fromStringList(mod.categories));
 	obj.insert("tags", QJsonArray::fromStringList(mod.tags));
 	obj.insert("references", stringStringMapToJson(mod.references));
