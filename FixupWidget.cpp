@@ -81,9 +81,9 @@ QVariant QuickModModel::data(const QModelIndex &index, int role) const
 		case NameCol: return mod.name;
 		case NemNameCol: return mod.nemName;
 		case ModIdCol: return mod.modId;
-		case WebsiteUrlCol: return mod.websiteUrl;
-		case IconUrlCol: return mod.iconUrl;
-		case LogoUrlCol: return mod.logoUrl;
+		case WebsiteUrlCol: return mod.urls["website"];
+		case IconUrlCol: return mod.urls["icon"];
+		case LogoUrlCol: return mod.urls["logo"];
 		case UpdateUrlCol: return mod.updateUrl;
 		case CategoriesCol: return mod.categories.join(',');
 		case TagsCol: return mod.tags.join(',');
@@ -96,9 +96,15 @@ QVariant QuickModModel::data(const QModelIndex &index, int role) const
 		switch (index.column())
 		{
 		case IconUrlCol:
-			return "<img src=\"" + Util::expandQMURL(mod.iconUrl).toString() + "\"/>";
+			if (!mod.urls["icon"].isEmpty())
+			{
+				return "<img src=\"" + Util::expandQMURL(mod.urls["icon"].first()).toString() + "\"/>";
+			}
 		case LogoUrlCol:
-			return "<img src=\"" + Util::expandQMURL(mod.logoUrl).toString() + "\"/>";
+			if (!mod.urls["logo"].isEmpty())
+			{
+				return "<img src=\"" + Util::expandQMURL(mod.urls["logo"].first()).toString() + "\"/>";
+			}
 		}
 	}
 	else if (role == Qt::DecorationRole)
@@ -125,9 +131,9 @@ bool QuickModModel::setData(const QModelIndex &index, const QVariant &value, int
 		case NameCol: mod.name = value.toString(); break;
 		case NemNameCol: mod.nemName = value.toString(); break;
 		case ModIdCol: mod.modId = value.toString(); break;
-		case WebsiteUrlCol: mod.websiteUrl = cleanUrl(value.toString()); break;
-		case IconUrlCol: mod.iconUrl = cleanUrl(value.toString()); break;
-		case LogoUrlCol: mod.logoUrl = cleanUrl(value.toString()); break;
+		case WebsiteUrlCol: mod.urls["website"] = QStringList() << cleanUrl(value.toString()); break;
+		case IconUrlCol: mod.urls["icon"] = QStringList() << cleanUrl(value.toString()); break;
+		case LogoUrlCol: mod.urls["logo"] = QStringList() << cleanUrl(value.toString()); break;
 		case UpdateUrlCol: mod.updateUrl = cleanUrl(value.toString()); break;
 		case CategoriesCol: mod.categories = value.toString().split(','); break;
 		case TagsCol: mod.tags = value.toString().split(','); break;
@@ -212,13 +218,13 @@ QString QuickModModel::cleanUrl(const QString &in) const
 	QRegularExpressionMatch mcfMatch = mcfExp.match(in);
 	if (mcfMatch.hasMatch())
 	{
-		return QString("mcf://") + mcfMatch.captured("id");
+		return QString("mcf:") + mcfMatch.captured("id");
 	}
 	QRegularExpression curseExp("http://www.curse.com/mc-mods/minecraft/(?<id>.*)");
 	QRegularExpressionMatch curseMatch = curseExp.match(in);
 	if (curseMatch.hasMatch())
 	{
-		return QString("curse://") + curseMatch.captured("id");
+		return QString("curse:") + curseMatch.captured("id");
 	}
 	return in;
 }

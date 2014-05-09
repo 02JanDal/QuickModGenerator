@@ -52,7 +52,7 @@ bool SetupCommand::handleCommand(const QString &command, const QCommandLineParse
 	}
 	if (cmd.isSet("curse"))
 	{
-		mod.websiteUrl = QString("http://www.curse.com/mc-mods/minecraft/%1").arg(cmd.value("curse"));
+		mod.urls["website"] = QStringList() << QString("http://www.curse.com/mc-mods/minecraft/%1").arg(cmd.value("curse"));
 	}
 	if (cmd.isSet("server"))
 	{

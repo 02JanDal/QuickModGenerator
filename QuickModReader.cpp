@@ -67,14 +67,21 @@ QuickMod QuickModReader::jsonToMod(const QByteArray &json, QStringList *errorStr
 	mod.description = obj.value("description").toString();
 	mod.categories = jsonToStringList(obj.value("categories"));
 	mod.tags = jsonToStringList(obj.value("tags"));
-	mod.websiteUrl = obj.value("websiteUrl").toString();
-	mod.iconUrl = obj.value("iconUrl").toString();
-	mod.logoUrl = obj.value("logoUrl").toString();
 	mod.updateUrl = obj.value("updateUrl").toString();
 	mod.authors = jsonToStringStringListMap(obj.value("authors"));
 	mod.references = jsonToStringStringMap(obj.value("references"));
 	mod.uid = obj.value("uid").toString();
 	mod.repo = obj.value("repo").toString();
+	auto urls = obj.value("urls").toObject();
+	for (auto it = urls.begin(); it != urls.end(); ++it)
+	{
+		QStringList list;
+		for (auto url : it.value().toArray())
+		{
+			list.append(url.toString());
+		}
+		mod.urls[it.key()] = list;
+	}
 	jsonToVersion(obj.value("versions").toArray(), mod);
 
 	return mod;

@@ -48,9 +48,12 @@ QByteArray QuickModWriter::modToJson(const QuickMod &mod)
 	obj.insert("description", mod.description);
 	obj.insert("nemName", mod.nemName);
 	obj.insert("modId", mod.modId);
-	obj.insert("websiteUrl", mod.websiteUrl);
-	obj.insert("iconUrl", mod.iconUrl);
-	obj.insert("logoUrl", mod.logoUrl);
+	QJsonObject urls;
+	for (auto it = mod.urls.begin(); it != mod.urls.end(); ++it)
+	{
+		urls.insert(it.key(), QJsonArray::fromStringList(it.value()));
+	}
+	obj.insert("urls", urls);
 	obj.insert("updateUrl", mod.updateUrl);
 	obj.insert("categories", QJsonArray::fromStringList(mod.categories));
 	obj.insert("tags", QJsonArray::fromStringList(mod.tags));
@@ -59,6 +62,7 @@ QByteArray QuickModWriter::modToJson(const QuickMod &mod)
 	obj.insert("uid", mod.uid);
 	obj.insert("repo", mod.repo);
 	obj.insert("versions", versionToJson(mod));
+	obj.insert("license", mod.license);
 
 	return QJsonDocument(obj).toJson(QJsonDocument::Indented);
 }

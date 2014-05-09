@@ -408,9 +408,9 @@ protected:
 			mod.categories.append(cat);
 		}
 		mod.categories.removeDuplicates();
-		if (mod.iconUrl.isEmpty())
+		if (mod.urls["icon"].isEmpty())
 		{
-			mod.iconUrl = root.value("thumbnail").toString();
+			mod.urls["icon"] = QStringList() << root.value("thumbnail").toString();
 		}
 		if (mod.authors.isEmpty())
 		{
@@ -957,9 +957,9 @@ bool UpdateCommand::handleCommand(const QString &command, const QCommandLinePars
 				   new BitlyBundleParser("ExAliquo"));
 	for (auto mod : mods)
 	{
-		if (mod.websiteUrl.contains("www.curse.com"))
+		if (!mod.urls["website"].isEmpty() && mod.urls["website"].first().contains("www.curse.com"))
 		{
-			parsers.insert(mod.websiteUrl.replace("www.curse.com", "widget.mcf.li").append(".json"), new CurseParser(mod.name));
+			parsers.insert(mod.urls["website"].first().replace("www.curse.com", "widget.mcf.li").append(".json"), new CurseParser(mod.name));
 		}
 	}
 

@@ -37,26 +37,26 @@ bool FixupCommand::handleCommand(const QString &command, const QCommandLineParse
 
 		out << "Fixing " << mod.name << endl << flush;
 
-		if (cmd.isSet("browser") && !mod.websiteUrl.isEmpty() && false)
+		if (cmd.isSet("browser") && !mod.urls["website"].isEmpty() && false)
 		{
-			QDesktopServices::openUrl(mod.websiteUrl);
+			QDesktopServices::openUrl(mod.urls["website"].first());
 		}
 
 		if (mod.description.isEmpty())
 		{
 			mod.description = getCommandLineInput("Description:");
 		}
-		if (mod.websiteUrl.isEmpty())
+		if (mod.urls["website"].isEmpty())
 		{
-			mod.websiteUrl = getCommandLineInput("Website URL:");
+			mod.urls["website"] = QStringList() << getCommandLineInput("Website URL:");
 		}
-		if (mod.iconUrl.isEmpty())
+		if (mod.urls["icon"].isEmpty())
 		{
-			mod.iconUrl = getCommandLineInput("Icon URL:");
+			mod.urls["icon"] = QStringList() << getCommandLineInput("Icon URL:");
 		}
-		if (mod.logoUrl.isEmpty())
+		if (mod.urls["logo"].isEmpty())
 		{
-			mod.logoUrl = getCommandLineInput("Logo URL:");
+			mod.urls["logo"] = QStringList() << getCommandLineInput("Logo URL:");
 		}
 		if (mod.modId.isEmpty())
 		{

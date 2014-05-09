@@ -24,9 +24,7 @@ struct QuickMod
 	QString nemName;
 	QString modId;
 	QString description;
-	QString websiteUrl;
-	QString iconUrl;
-	QString logoUrl;
+	QMap<QString, QStringList> urls;
 	QMap<QString, QString> references;
 	QString updateUrl;
 	QStringList categories;
@@ -35,6 +33,7 @@ struct QuickMod
 	QMap<QString, QStringList> authors;
 	QString uid;
 	QString repo;
+	QString license;
 
 	bool isInvalid() const { return m_invalid; }
 
