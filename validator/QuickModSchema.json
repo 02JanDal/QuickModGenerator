@@ -3,6 +3,14 @@
    "required":true,
    "additionalProperties":false,
    "properties":{
+      "formatVersion":{
+         "type":"integer",
+         "required":true,
+      },
+      "license":{
+         "type":"string",
+         "required":false
+      },
       "authors":{
          "type":"object",
          "required":false
@@ -28,6 +36,77 @@
       "description":{
          "type":"string",
          "required":false
+      },
+      "urls":{
+         "type": "object",
+         "required":false,
+         "additionalProperties":false,
+         "properties":{
+            "website": {
+               "type":"array",
+               "required":false,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string"
+               }
+            },
+            "wiki": {
+               "type":"array",
+               "required":false,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string" 
+               }
+            },
+            "forum": {
+               "type":"array",
+               "required":false,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string" 
+               }
+            },
+            "donation": {
+               "type":"array",
+               "required":false,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string" 
+               }
+            },
+            "source": {
+               "type":"array",
+               "required":false,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string" 
+               }
+            },
+            "issues": {
+               "type":"array",
+               "required":false,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string" 
+               }
+            },
+            "icon": {
+               "type":"array",
+               "required":false,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string" 
+               }
+            },
+            "logo": {
+               "type":"array",
+               "required":false,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string" 
+               }
+            }
+         }
       },
       "iconUrl":{
          "type":"string",
@@ -162,16 +241,6 @@
                }
             }
          ]
-      },
-      "websiteUrl":{
-         "type":"string",
-         "required":false,
-         "format":"uri"
-      },
-      "verifyUrl":{
-         "type":"string",
-         "required":false,
-         "format":"uri"
       }
    }
 }
