@@ -57,7 +57,6 @@ QByteArray QuickModWriter::modToJson(const QuickMod &mod)
 	}
 	obj.insert("urls", urls);
 	obj.insert("updateUrl", mod.updateUrl);
-	obj.insert("verifyUrl", mod.verifyUrl);
 	obj.insert("categories", QJsonArray::fromStringList(mod.categories));
 	obj.insert("tags", QJsonArray::fromStringList(mod.tags));
 	obj.insert("references", stringStringMapToJson(mod.references));

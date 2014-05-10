@@ -19,7 +19,6 @@
 #include "VerifyCommand.h"
 #include "UpdateCommand.h"
 #include "GuiCommand.h"
-#include "CreateChecksumCommand.h"
 
 int main(int argc, char **argv)
 {
@@ -29,7 +28,7 @@ int main(int argc, char **argv)
 	QList<AbstractCommand *> commandProviders;
 	commandProviders << new DumpCommand << new FixupCommand << new FormatCommand
 					 << new GraphCommand << new IndexCommand << new SetupCommand
-					 << new VerifyCommand << new UpdateCommand << new GuiCommand << new CreateChecksumCommand;
+					 << new VerifyCommand << new UpdateCommand << new GuiCommand;
 
 	QMap<QString, AbstractCommand *> commands;
 	foreach(AbstractCommand * commandProvider, commandProviders)

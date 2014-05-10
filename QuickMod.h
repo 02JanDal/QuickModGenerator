@@ -27,7 +27,6 @@ struct QuickMod
 	QMap<QString, QStringList> urls;
 	QMap<QString, QString> references;
 	QString updateUrl;
-	QString verifyUrl;
 	QStringList categories;
 	QStringList tags;
 	QList<QuickModVersion> versions;

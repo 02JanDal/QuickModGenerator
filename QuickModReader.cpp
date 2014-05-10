@@ -68,7 +68,6 @@ QuickMod QuickModReader::jsonToMod(const QByteArray &json, const QString &filena
 	mod.categories = jsonToStringList(obj.value("categories"));
 	mod.tags = jsonToStringList(obj.value("tags"));
 	mod.updateUrl = obj.value("updateUrl").toString();
-	mod.verifyUrl = obj.value("verifyUrl").toString();
 	mod.authors = jsonToStringStringListMap(obj.value("authors"));
 	mod.references = jsonToStringStringMap(obj.value("references"));
 	mod.uid = obj.value("uid").toString();
