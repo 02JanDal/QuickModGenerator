@@ -77,7 +77,6 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 		QJsonObject obj;
 		obj.insert("name", ver.name);
 		obj.insert("type", ver.type);
-		obj.insert("url", ver.url);
 		obj.insert("mcCompat", QJsonArray::fromStringList(ver.mcCompat));
 		QJsonArray refs;
 		for (auto ref : ver.references.keys())
@@ -97,7 +96,6 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 		{
 			obj.insert("md5", ver.md5);
 		}
-		obj.insert("downloadType", ver.downloadType);
 		switch (ver.installType)
 		{
 		case QuickModVersion::ForgeMod:     obj.insert("installType", QString("forgeMod"));     break;
@@ -107,9 +105,35 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 		case QuickModVersion::Group:	    obj.insert("installType", QString("group"));		break;
 		default: obj.insert("installType", QString("forgeMod")); break;
 		}
+		QJsonArray urls;
+		for (auto download : ver.urls)
+		{
+			urls.append(downloadToJson(download, ver.urls.size() == 1));
+		}
+		obj.insert("urls", urls);
 		array.append(obj);
 	}
 	return array;
+}
+
+QJsonObject QuickModWriter::downloadToJson(const QuickModDownload &download, const bool isOnly)
+{
+	QJsonObject obj;
+	obj.insert("url", download.url);
+	obj.insert("downloadType", download.downloadType);
+	if (!isOnly)
+	{
+		obj.insert("priority", download.priority);
+	}
+	if (!download.hint.isEmpty())
+	{
+		obj.insert("hint", download.hint);
+	}
+	if (!download.group.isEmpty())
+	{
+		obj.insert("group", download.group);
+	}
+	return obj;
 }
 
 QJsonObject QuickModWriter::stringStringMapToJson(const QMap<QString, QString> &map)

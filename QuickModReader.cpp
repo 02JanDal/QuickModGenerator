@@ -95,7 +95,6 @@ void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 		QuickModVersion version;
 		version.name = obj.value("name").toString();
 		version.type = obj.value("type").toString("Release");
-		version.url = obj.value("url").toString();
 		version.mcCompat = jsonToStringList(obj.value("mcCompat"));
 		version.references.clear();
 		for (auto item : obj.value("references").toArray())
@@ -105,10 +104,16 @@ void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 		}
 		version.forgeCompat = obj.value("forgeCompat").toString();
 		version.md5 = obj.value("md5").toString();
-		version.downloadType = obj.value("downloadType").toString("parallel");
-		if (version.downloadType.isEmpty())
+		for (auto val : obj.value("urls").toArray())
 		{
-			version.downloadType = "parallel";
+			const QJsonObject obj = val.toObject();
+			QuickModDownload download;
+			download.url = obj.value("url").toString();
+			download.downloadType = obj.value("downloadType").toString();
+			download.priority = obj.value("priority").toInt(0);
+			download.hint = obj.value("hint").toString();
+			download.group = obj.value("group").toString();
+			version.urls.append(download);
 		}
 		const QString installType = obj.value("installType").toString();
 		if (installType == "forgeMod")

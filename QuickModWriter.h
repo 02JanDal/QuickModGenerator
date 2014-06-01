@@ -19,6 +19,7 @@ public:
 private:
 	static QByteArray modToJson(const QuickMod &mod);
 	static QJsonArray versionToJson(const QuickMod &mod);
+	static QJsonObject downloadToJson(const QuickModDownload &download, const bool isOnly);
 	static QJsonObject stringStringMapToJson(const QMap<QString, QString> &map);
 	static QJsonObject stringStringListMapToJson(const QMap<QString, QStringList> &map);
 };

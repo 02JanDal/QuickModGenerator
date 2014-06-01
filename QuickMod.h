@@ -1,20 +1,35 @@
 #pragma once
 
 #include <QString>
+#include <QStringList>
 #include <QUrl>
 #include <QMap>
+
+struct QuickModDownload
+{
+	QuickModDownload(const QString &url, const QString &downloadType) : url(url), downloadType(downloadType) {}
+	QuickModDownload() {}
+	QString url;
+	QString downloadType;
+	int priority = -1;
+	QString hint;
+	QString group;
+};
 
 struct QuickModVersion
 {
 	QString name;
 	QString type;
-	QString url;
 	QStringList mcCompat;
 	QString forgeCompat;
 	QMap<QString, QPair<QString, QString> > references;
 	QString md5;
-	QString downloadType;
+	QList<QuickModDownload> urls;
 	enum { ForgeMod, ForgeCoreMod, ConfigPack, Extract, Group, Invalid } installType = Invalid;
+
+	void sort();
+	void tryAddUrl(const QuickModDownload &download);
+	QuickModDownload getBestDownload();
 };
 
 struct QuickMod

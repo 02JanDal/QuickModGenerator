@@ -336,20 +336,9 @@ protected:
 					{
 						v.mcCompat.append(pair.first);
 					}
-					if (v.url.isEmpty() || (v.url.contains("adf.ly") &&
-											!pair.second.toString().contains("adf.ly")))
-					{
-						v.url = pair.second.toString();
-						v.md5.clear();
-						if (pair.second.toString().contains("adf.ly"))
-						{
-							v.downloadType = "sequential";
-						}
-						else
-						{
-							v.downloadType = "direct";
-						}
-					}
+					v.md5.clear();
+					v.tryAddUrl(QuickModDownload(pair.second.toString(),
+												 pair.second.toString().contains("adf.ly") ? "sequential" : "direct"));
 					if (v.installType == QuickModVersion::Invalid)
 					{
 						v.installType = QuickModVersion::ForgeMod;
@@ -429,9 +418,8 @@ protected:
 			}
 			QuickModVersion version;
 			version.name = name;
-			version.url = obj.value("url").toString();
+			version.tryAddUrl(QuickModDownload(obj.value("url").toString(), "parallel"));
 			version.mcCompat += obj.value("version").toString();
-			version.downloadType = "parallel";
 			version.installType = QuickModVersion::ForgeMod;
 			mod.versions.append(version);
 		}
@@ -493,8 +481,7 @@ protected:
 					{
 						QuickModVersion v;
 						v.name = version;
-						v.url = linkList[version].toString();
-						v.downloadType = "direct";
+						v.tryAddUrl(QuickModDownload(linkList[version].toString(), "direct"));
 						mod.versions.append(v);
 					}
 				}
@@ -544,9 +531,8 @@ protected:
 					{
 						QuickModVersion v;
 						v.name = version;
-						v.url = linkList[version].first.toString();
+						v.tryAddUrl(QuickModDownload(linkList[version].first.toString(), "direct"));
 						v.mcCompat += linkList[version].second;
-						v.downloadType = "direct";
 						mod.versions.append(v);
 					}
 				}
@@ -656,13 +642,14 @@ protected:
 		QTextStream in(stdin);
 		for (auto version : m_mod.versions)
 		{
-			auto url = Util::expandQMURL(version.url);
+			QuickModDownload download = version.getBestDownload();
+			auto url = Util::expandQMURL(download.url);
 			QFile *f = new QFile(filename(m_mod, version));
 			if (f->exists())
 			{
 				continue;
 			}
-			if (version.downloadType != "direct" && url.host() != "www.curse.com")
+			if (download.downloadType != "direct" && url.host() != "www.curse.com")
 			{
 				QDesktopServices::openUrl(url);
 				output(m_mod.name + " " + version.name + ">");

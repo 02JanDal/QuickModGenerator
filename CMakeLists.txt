@@ -25,6 +25,7 @@ set(SOURCES
  main.cpp
 
  QuickMod.h
+ QuickMod.cpp
  QuickModWriter.h
  QuickModWriter.cpp
  QuickModReader.h

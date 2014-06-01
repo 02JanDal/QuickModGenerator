@@ -209,20 +209,8 @@
                      "type":"string",
                      "required":true
                   },
-                  "url":{
-                     "type":"string",
-                     "required":true
-                  },
                   "md5":{
                      "type":"string"
-                  },
-                  "downloadType":{
-                     "type":"string",
-                     "enum":[
-                        "direct",
-                        "parallel",
-                        "sequential"
-                     ]
                   },
                   "installType":{
                      "type":"string",
@@ -235,8 +223,27 @@
                         "group"
                      ]
                   },
-                  "type":{
-                     "type": "string"
+                  "urls":{
+                     "type": "array",
+                     "required": true,
+                     "items": [
+                        {
+                           "type": "object",
+                           "properties": {
+                              "url": {
+                                 "type": "string", "required": true
+                              },
+                              "downloadType": {
+                                 "type": "string", "required": true, "enum": [ "direct", "parallel", "sequential", "encoded" ]
+                              },
+                              "priority": {
+                                 "type": "integer", "required": false
+                              },
+                              "hint": { "type": "string", "required": false },
+                              "group": { "type": "string", "required": false }
+                           }
+                        }
+                     ]
                   }
                }
             }
