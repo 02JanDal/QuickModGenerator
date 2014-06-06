@@ -336,7 +336,7 @@ protected:
 					{
 						v.mcCompat.append(pair.first);
 					}
-					v.md5.clear();
+					v.sha1.clear();
 					v.tryAddUrl(QuickModDownload(pair.second.toString(),
 												 pair.second.toString().contains("adf.ly") ? "sequential" : "direct"));
 					if (v.installType == QuickModVersion::Invalid)
@@ -611,8 +611,8 @@ protected:
 			QFile f(filename(*m_mod, version));
 			if (f.open(QFile::ReadOnly))
 			{
-				version.md5 = QString::fromLatin1(
-					QCryptographicHash::hash(f.readAll(), QCryptographicHash::Md5).toHex());
+				version.sha1 = QString::fromLatin1(
+					QCryptographicHash::hash(f.readAll(), QCryptographicHash::Sha1).toHex());
 				m_mod->versions.replace(i, version);
 			}
 		}

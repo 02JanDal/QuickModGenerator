@@ -23,7 +23,7 @@ struct QuickModVersion
 	QStringList mcCompat;
 	QString forgeCompat;
 	QMap<QString, QPair<QString, QString> > references;
-	QString md5;
+	QString sha1;
 	QList<QuickModDownload> urls;
 	enum { ForgeMod, ForgeCoreMod, ConfigPack, Extract, Group, Invalid } installType = Invalid;
 
@@ -49,6 +49,7 @@ struct QuickMod
 	QString uid;
 	QString repo;
 	QString license;
+	QStringList mavenRepos;
 
 	bool isInvalid() const { return m_invalid; }
 

@@ -117,9 +117,9 @@ bool FixupCommand::handleCommand(const QString &command, const QCommandLineParse
 
 			out << " Version " << version.name << endl << flush;
 
-			if (version.md5.isEmpty() && !cmd.isSet("no-checksums"))
+			if (version.sha1.isEmpty() && !cmd.isSet("no-checksums"))
 			{
-				version.md5 = getCommandLineInput(" Checksum:");
+				version.sha1 = getCommandLineInput(" Checksum:");
 			}
 
 			vit.setValue(version);

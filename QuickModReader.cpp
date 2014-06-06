@@ -72,6 +72,10 @@ QuickMod QuickModReader::jsonToMod(const QByteArray &json, const QString &filena
 	mod.references = jsonToStringStringMap(obj.value("references"));
 	mod.uid = obj.value("uid").toString();
 	mod.repo = obj.value("repo").toString();
+	for (auto repo : obj.value("mavenRepos").toObject())
+	{
+		mod.mavenRepos.append(repo.toString());
+	}
 	auto urls = obj.value("urls").toObject();
 	for (auto it = urls.begin(); it != urls.end(); ++it)
 	{
@@ -103,7 +107,7 @@ void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 			version.references.insert(refObj.value("uid").toString(), qMakePair(refObj.value("version").toString(), refObj.value("type").toString()));
 		}
 		version.forgeCompat = obj.value("forgeCompat").toString();
-		version.md5 = obj.value("md5").toString();
+		version.sha1 = obj.value("sha1").toString();
 		for (auto val : obj.value("urls").toArray())
 		{
 			const QJsonObject obj = val.toObject();

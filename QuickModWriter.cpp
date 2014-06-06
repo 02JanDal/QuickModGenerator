@@ -92,10 +92,7 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 		{
 			obj.insert("forgeCompat", ver.forgeCompat);
 		}
-		if (!ver.md5.isEmpty())
-		{
-			obj.insert("md5", ver.md5);
-		}
+		obj.insert("sha1", ver.sha1);
 		switch (ver.installType)
 		{
 		case QuickModVersion::ForgeMod:     obj.insert("installType", QString("forgeMod"));     break;
