@@ -52,6 +52,10 @@ bool IndexCommand::handleCommand(const QString &command, const QCommandLineParse
 	}
 	root.insert("index", items);
 	root.insert("baseUrl", base);
+	if (cmd.isSet("repo"))
+	{
+		root.insert("repo", cmd.value("repo"));
+	}
 
 	QFile file(QDir::current().absoluteFilePath("index.json"));
 	if (!file.open(QFile::WriteOnly | QFile::Truncate))
@@ -68,4 +72,5 @@ bool IndexCommand::handleCommand(const QString &command, const QCommandLineParse
 void IndexCommand::populateParserForCommand(const QString &command, QCommandLineParser *cmd)
 {
 	cmd->addOption(QCommandLineOption("base", "The baseUrl", "<URL>"));
+	cmd->addOption(QCommandLineOption("repo", "The value for the 'repo' field", "<REPO>"));
 }
