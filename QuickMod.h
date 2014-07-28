@@ -22,10 +22,11 @@ struct QuickModVersion
 	QString type;
 	QStringList mcCompat;
 	QString forgeCompat;
+	QString liteloaderCompat;
 	QMap<QString, QPair<QString, QString> > references;
 	QString sha1;
 	QList<QuickModDownload> urls;
-	enum { ForgeMod, ForgeCoreMod, ConfigPack, Extract, Group, Invalid } installType = Invalid;
+	enum { ForgeMod, ForgeCoreMod, LiteLoaderMod, ConfigPack, Extract, Group, Invalid } installType = Invalid;
 
 	void sort();
 	void tryAddUrl(const QuickModDownload &download);

@@ -92,14 +92,19 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 		{
 			obj.insert("forgeCompat", ver.forgeCompat);
 		}
+		if (!ver.liteloaderCompat.isEmpty())
+		{
+			obj.insert("liteloaderCompat", ver.liteloaderCompat);
+		}
 		obj.insert("sha1", ver.sha1);
 		switch (ver.installType)
 		{
-		case QuickModVersion::ForgeMod:     obj.insert("installType", QString("forgeMod"));     break;
-		case QuickModVersion::ForgeCoreMod: obj.insert("installType", QString("forgeCoreMod")); break;
-		case QuickModVersion::Extract:      obj.insert("installType", QString("extract"));		break;
-		case QuickModVersion::ConfigPack:   obj.insert("installType", QString("configPack"));   break;
-		case QuickModVersion::Group:	    obj.insert("installType", QString("group"));		break;
+		case QuickModVersion::ForgeMod:      obj.insert("installType", QStringLiteral("forgeMod"));      break;
+		case QuickModVersion::ForgeCoreMod:  obj.insert("installType", QStringLiteral("forgeCoreMod"));  break;
+		case QuickModVersion::LiteLoaderMod: obj.insert("installType", QStringLiteral("liteloaderMod")); break;
+		case QuickModVersion::Extract:       obj.insert("installType", QStringLiteral("extract"));	    break;
+		case QuickModVersion::ConfigPack:    obj.insert("installType", QStringLiteral("configPack"));    break;
+		case QuickModVersion::Group:	     obj.insert("installType", QStringLiteral("group"));	        break;
 		default: obj.insert("installType", QString("forgeMod")); break;
 		}
 		QJsonArray urls;

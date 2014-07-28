@@ -107,6 +107,7 @@ void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 			version.references.insert(refObj.value("uid").toString(), qMakePair(refObj.value("version").toString(), refObj.value("type").toString()));
 		}
 		version.forgeCompat = obj.value("forgeCompat").toString();
+		version.liteloaderCompat = obj.value("liteloaderCompat").toString();
 		version.sha1 = obj.value("sha1").toString();
 		for (auto val : obj.value("urls").toArray())
 		{
@@ -127,6 +128,10 @@ void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 		else if (installType == "forgeCoreMod")
 		{
 			version.installType = QuickModVersion::ForgeCoreMod;
+		}
+		else if (installType == "liteloaderMod")
+		{
+			version.installType = QuickModVersion::LiteLoaderMod;
 		}
 		else if (installType == "extract")
 		{
