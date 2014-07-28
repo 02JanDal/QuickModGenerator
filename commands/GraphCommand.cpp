@@ -54,7 +54,7 @@ bool GraphCommand::handleCommand(const QString &command, const QCommandLineParse
 		out << "\"" << mod.uid << "\" [label=\"" << mod.name << "\\n" << version.name << "\",style=\"" << style << "\"]" << endl;
 		for (auto it = version.references.begin(); it != version.references.end(); ++it)
 		{
-			out << "\"" << mod.uid << "\" -> \"" << it.key() << "\" [style=\"" << referenceStyles[it.value().second] << "\"]" << endl;
+			out << "\"" << mod.uid << "\" -> \"" << it.key() << "\" [style=\"" << referenceStyles[it.value().type] << "\"]" << endl;
 		}
 	}
 	out << "}" << endl;

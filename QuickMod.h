@@ -23,7 +23,21 @@ struct QuickModVersion
 	QStringList mcCompat;
 	QString forgeCompat;
 	QString liteloaderCompat;
-	QMap<QString, QPair<QString, QString> > references;
+	struct Reference
+	{
+		Reference()
+		{
+		}
+		Reference(const QString &version, const QString &type, const bool isSoft = false)
+			: version(version), type(type), isSoft(isSoft)
+		{
+		}
+		QString version;
+		QString type;
+		bool isSoft = false;
+	};
+
+	QMap<QString, Reference> references;
 	QString sha1;
 	QList<QuickModDownload> urls;
 	enum { ForgeMod, ForgeCoreMod, LiteLoaderMod, ConfigPack, Extract, Group, Invalid } installType = Invalid;

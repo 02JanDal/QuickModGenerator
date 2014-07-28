@@ -83,8 +83,12 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 		{
 			QJsonObject refObj;
 			refObj.insert("uid", ref);
-			refObj.insert("version", ver.references[ref].first);
-			refObj.insert("type", ver.references[ref].second);
+			refObj.insert("version", ver.references[ref].version);
+			refObj.insert("type", ver.references[ref].type);
+			if (ver.references[ref].isSoft)
+			{
+				refObj.insert("isSoft", true);
+			}
 			refs.append(refObj);
 		}
 		obj.insert("references", refs);

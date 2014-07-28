@@ -772,7 +772,7 @@ protected:
 		const QJsonObject obj = QJsonDocument::fromJson(output).object();
 		QStringList modids;
 		QStringList packages;
-		QMap<QString, QMap<QString, QMap<QString, QPair<QString, QString>>>> references;
+		QMap<QString, QMap<QString, QMap<QString, QuickModVersion::Reference>>> references;
 		QMap<QString, QMap<QString, QString>> forge;
 		for (auto it = obj.begin(); it != obj.end(); ++it)
 		{
@@ -817,8 +817,9 @@ protected:
 					else
 					{
 						references[modid][v.name].insert(
-							uid, qMakePair(version, type.contains("required") ? "depends"
-																			  : "recommends"));
+							uid, QuickModVersion::Reference(version,
+															type.contains("required") ? "depends"
+																					  : "recommends"));
 					}
 				}
 			}
@@ -883,7 +884,7 @@ protected:
 		}
 
 		// finally references and forge
-		QMap<QString, QMap<QString, QPair<QString, QString>>> refs = references[modid];
+		QMap<QString, QMap<QString, QuickModVersion::Reference>> refs = references[modid];
 		QMap<QString, QString> forges = forge[modid];
 		QMutableListIterator<QuickModVersion> it(m_mod->versions);
 		while (it.hasNext())

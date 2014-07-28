@@ -104,7 +104,10 @@ void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 		for (auto item : obj.value("references").toArray())
 		{
 			const QJsonObject refObj = item.toObject();
-			version.references.insert(refObj.value("uid").toString(), qMakePair(refObj.value("version").toString(), refObj.value("type").toString()));
+			version.references.insert(refObj.value("uid").toString(),
+									  QuickModVersion::Reference(refObj.value("version").toString(),
+																 refObj.value("type").toString(),
+																 refObj.value("isSoft").toBool(false)));
 		}
 		version.forgeCompat = obj.value("forgeCompat").toString();
 		version.liteloaderCompat = obj.value("liteloaderCompat").toString();
