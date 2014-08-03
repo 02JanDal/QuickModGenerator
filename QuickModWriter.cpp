@@ -76,6 +76,10 @@ QJsonArray QuickModWriter::versionToJson(const QuickMod &mod)
 	{
 		QJsonObject obj;
 		obj.insert("name", ver.name);
+		if (!ver.version.isNull() && ver.name != ver.version)
+		{
+			obj.insert("version", ver.version);
+		}
 		obj.insert("type", ver.type);
 		obj.insert("mcCompat", QJsonArray::fromStringList(ver.mcCompat));
 		QJsonArray refs;

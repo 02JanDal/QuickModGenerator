@@ -98,6 +98,7 @@ void QuickModReader::jsonToVersion(const QJsonArray &array, QuickMod &mod)
 		QJsonObject obj = val.toObject();
 		QuickModVersion version;
 		version.name = obj.value("name").toString();
+		version.version = obj.contains("version") ? obj.value("version").toString() : QString();
 		version.type = obj.value("type").toString("Release");
 		version.mcCompat = jsonToStringList(obj.value("mcCompat"));
 		version.references.clear();

@@ -19,6 +19,7 @@ struct QuickModDownload
 struct QuickModVersion
 {
 	QString name;
+	QString version;
 	QString type;
 	QStringList mcCompat;
 	QString forgeCompat;
