@@ -1,4 +1,6 @@
-# QuickModGenerator
+# Deprecated, see [here](https://github.com/02JanDal/QMTools) for the successor
+
+## QuickModGenerator
 
 A command line or GUI tool for handling QuickMod files
 
